@@ -33,17 +33,17 @@ if (process.env.VERCEL_URL) allowedOrigins.push(`https://${process.env.VERCEL_UR
 
 app.use(cors({
   origin: (origin, cb) => {
-    // Allow requests with no origin (like mobile apps or curl requests)
+    // Allow requests with no origin
     if (!origin) return cb(null, true);
     
     // Allow if origin is in allowedOrigins list
     if (allowedOrigins.includes(origin)) return cb(null, true);
     
-    // Allow any localhost with any port in development
+    // Allow any localhost in development
     if (process.env.NODE_ENV !== 'production' && origin.match(/^http:\/\/localhost:\d+$/)) return cb(null, true);
     
-    // Allow any vercel.app domain
-    if (origin.includes('vercel.app')) return cb(null, true);
+    // Allow any vercel.app domain - ADD THIS LINE IF MISSING
+    if (origin && origin.includes('vercel.app')) return cb(null, true);
     
     // Reject all others
     console.log(`CORS blocked: ${origin}`);
