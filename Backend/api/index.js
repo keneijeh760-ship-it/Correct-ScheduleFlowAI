@@ -26,7 +26,7 @@ const allowedOrigins = [
   'http://localhost:3000', 'http://localhost:3001',
   'http://127.0.0.1:5173', 'http://127.0.0.1:5174',
   'http://127.0.0.1:3000', 'http://127.0.0.1:3001',
-  'https://correct-schedule-flow-ai-frontend-c.vercel.app'
+'https://correct-schedule-flow-ai-frontend-c.vercel.app'
 ];
 if (process.env.FRONTEND_URL) allowedOrigins.push(process.env.FRONTEND_URL);
 if (process.env.VERCEL_URL) allowedOrigins.push(`https://${process.env.VERCEL_URL}`);
