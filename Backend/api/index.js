@@ -20,44 +20,7 @@ const readFileAsync = promisify(fs.readFile);
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent';
 
-// CORS configuration
-const allowedOrigins = [
-  'http://localhost:5173', 'http://localhost:5174',
-  'http://localhost:3000', 'http://localhost:3001',
-  'http://127.0.0.1:5173', 'http://127.0.0.1:5174',
-  'http://127.0.0.1:3000', 'http://127.0.0.1:3001',
-'https://correct-schedule-flow-ai-frontend-c.vercel.app'
-];
-if (process.env.FRONTEND_URL) allowedOrigins.push(process.env.FRONTEND_URL);
-if (process.env.VERCEL_URL) allowedOrigins.push(`https://${process.env.VERCEL_URL}`);
-
-app.use(cors({
-  origin: (origin, cb) => {
-    // Allow requests with no origin
-    if (!origin) return cb(null, true);
-    
-    // Allow if origin is in allowedOrigins list
-    if (allowedOrigins.includes(origin)) return cb(null, true);
-    
-    // Allow any localhost in development
-    if (process.env.NODE_ENV !== 'production' && origin.match(/^http:\/\/localhost:\d+$/)) return cb(null, true);
-    
-    // Allow any vercel.app domain - ADD THIS LINE IF MISSING
-    if (origin && origin.includes('vercel.app')) return cb(null, true);
-    
-    // Reject all others
-    console.log(`CORS blocked: ${origin}`);
-
-    // Allow any vercel.app domain
-if (origin && origin.includes('vercel.app')) return cb(null, true);
-    
-    cb(new Error(`CORS policy violation: ${origin}`), false);
-  },
-  credentials: true,
-  methods: ['GET','POST','PUT','DELETE','OPTIONS'],
-  allowedHeaders: ['Content-Type','Authorization','X-Requested-With'],
-  optionsSuccessStatus: 200
-}));
+app.use(cors());
 
 app.use(bodyParser.json({ limit:'10mb' }));
 app.use(bodyParser.urlencoded({ extended:true, limit:'10mb' }));
