@@ -37,7 +37,7 @@ function SchedulesPage() {
 
   const deletePdfSchedule = async (id) => {
     try {
-      const res = await fetch(`http://localhost:5000/api/schedules/${id}`, {
+      const res = await fetch('https://schedule-flow-d53yvzg4x-kenes-projects-52f601fb.vercel.app/api/generate-schedule', {
         method: "DELETE",
       });
 
