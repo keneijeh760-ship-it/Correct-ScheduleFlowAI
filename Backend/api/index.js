@@ -7,7 +7,6 @@ import PDFDocument from 'pdfkit';
 import fs from 'fs';
 import path from 'path';
 import { promisify } from 'util';
-import { Client } from '@google/genai'; // Updated SDK
 
 dotenv.config();
 
@@ -17,10 +16,9 @@ const app = express();
 const writeFileAsync = promisify(fs.writeFile);
 const readFileAsync = promisify(fs.readFile);
 
-// AI client
-const genAI = process.env.GEMINI_API_KEY
-  ? new Client({ apiKey: process.env.GEMINI_API_KEY })
-  : null;
+// AI client - Using fetch API for Gemini
+const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
+const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent';
 
 // CORS configuration
 const allowedOrigins = [
@@ -34,10 +32,20 @@ if (process.env.VERCEL_URL) allowedOrigins.push(`https://${process.env.VERCEL_UR
 
 app.use(cors({
   origin: (origin, cb) => {
+    // Allow requests with no origin (like mobile apps or curl requests)
     if (!origin) return cb(null, true);
+    
+    // Allow if origin is in allowedOrigins list
     if (allowedOrigins.includes(origin)) return cb(null, true);
+    
+    // Allow any localhost with any port in development
     if (process.env.NODE_ENV !== 'production' && origin.match(/^http:\/\/localhost:\d+$/)) return cb(null, true);
+    
+    // Allow any vercel.app domain
     if (origin.includes('vercel.app')) return cb(null, true);
+    
+    // Reject all others
+    console.log(`CORS blocked: ${origin}`);
     cb(new Error(`CORS policy violation: ${origin}`), false);
   },
   credentials: true,
@@ -88,7 +96,34 @@ function validateScheduleRequest(req, res, next) {
 function buildSchedulePrompt(tasks, category, purpose) {
   const cat = category ? `This schedule is for: ${category}. ` : '';
   const pur = purpose ? `Purpose: ${purpose}. ` : '';
-  return `You are an intelligent schedule planner. ${cat}${pur}Tasks: ${tasks.join(", ")}. Return JSON with keys 6-7,7-8,...7-8PM for MONDAY-SUNDAY.`;
+  return `You are an intelligent schedule planner. ${cat}${pur}Tasks: ${tasks.join(", ")}. Return ONLY a valid JSON object with time slot keys like "6-7", "7-8", etc. up to "7-8PM" for days MONDAY through SUNDAY. Each time slot should map to an object with day keys. Example format: {"6-7": {"MONDAY": "Task1", "TUESDAY": "Task2", ...}, "7-8": {...}}`;
+}
+
+async function callGeminiAPI(prompt) {
+  if (!GEMINI_API_KEY) {
+    throw new Error('No API key available');
+  }
+
+  const response = await fetch(`${GEMINI_API_URL}?key=${GEMINI_API_KEY}`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      contents: [{
+        parts: [{
+          text: prompt
+        }]
+      }]
+    })
+  });
+
+  if (!response.ok) {
+    throw new Error(`Gemini API error: ${response.status}`);
+  }
+
+  const data = await response.json();
+  return data.candidates?.[0]?.content?.parts?.[0]?.text || '';
 }
 
 function parseScheduleFromAI(responseText) {
@@ -158,7 +193,7 @@ async function generatePDF(scheduleData, tasks) {
 }
 
 // Routes
-app.get('/api/health', (req,res)=>res.json({status:'OK', timestamp:new Date().toISOString(), gemini: !!genAI}));
+app.get('/api/health', (req,res)=>res.json({status:'OK', timestamp:new Date().toISOString(), gemini: !!GEMINI_API_KEY}));
 
 app.post('/api/generate-schedule', validateScheduleRequest, async (req,res)=>{
   const requestId = Date.now().toString();
@@ -166,16 +201,17 @@ app.post('/api/generate-schedule', validateScheduleRequest, async (req,res)=>{
   let scheduleData;
 
   try {
-    if(!genAI) scheduleData = getDefaultSchedule(tasks);
-    else {
+    if(!GEMINI_API_KEY) {
+      scheduleData = getDefaultSchedule(tasks);
+    } else {
       const prompt = buildSchedulePrompt(tasks, category, purpose);
-      const response = await genAI.generateContent({
-        model: 'gemini-1.5-flash',
-        input: prompt
-      });
-      scheduleData = parseScheduleFromAI(response.outputText);
+      const responseText = await callGeminiAPI(prompt);
+      scheduleData = parseScheduleFromAI(responseText);
     }
-  } catch(e){ scheduleData = getDefaultSchedule(tasks); }
+  } catch(e){ 
+    console.error('AI generation failed:', e);
+    scheduleData = getDefaultSchedule(tasks); 
+  }
 
   try {
     const pdfData = await generatePDF(scheduleData, tasks);
@@ -187,6 +223,7 @@ app.post('/api/generate-schedule', validateScheduleRequest, async (req,res)=>{
     });
     res.send(pdfData);
   } catch(e) {
+    console.error('PDF generation failed:', e);
     res.status(500).json({error:'PDF generation failed', details:e.message});
   }
 });
