@@ -85,7 +85,7 @@
   align-items: flex-start;
   min-height: 100vh;
   padding-top: 60px;
-  background-image: url('work.jpg');
+  background-image: url('./assets/work.jpg');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -141,7 +141,7 @@
 body {
   margin: 0;
   font-family: 'Segoe UI', sans-serif;
-  background-image: url('C:\Users\Kene\Desktop\Begginingresume\Frontend\src\assets\work.jpg');
+  background-image: url('./assets/work.jpg');
 }
 
 
@@ -257,7 +257,7 @@ button:hover {
 .content {
   
   min-height: 100vh;
-  background-image: url('C:\Users\Kene\Desktop\Begginingresume\Frontend\src\assets\work.jpg');
+  background-image: url('./assets/work.jpg');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -413,7 +413,7 @@ button:hover {
       justify-content: center;
       align-items: center;
       min-height: 100vh;
-      background-image: url('work.jpg');
+      background-image: url('./assets/work.jpg');
       background-size: cover;
       background-position: center;
       background-repeat: no-repeat;
@@ -557,7 +557,7 @@ button:hover {
       justify-content: center;
       align-items: center;
       min-height: 100vh;
-      background-image: url('work.jpg');
+      background-image: url('./assets/work.jpg');
       background-size: cover;
       background-position: center;
       background-repeat: no-repeat;
