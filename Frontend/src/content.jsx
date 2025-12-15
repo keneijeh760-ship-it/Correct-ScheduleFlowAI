@@ -14,7 +14,7 @@ function Content() {
     try {
       // Split tasks by comma or newline
       const tasks = taskInput.split(/\n|,/).map(t => t.trim()).filter(Boolean);
-     const response = await fetch('https://schedule-flow-re8od0bwb-kenes-projects-52f601fb.vercel.app/api/generate-schedule', {
+    const response = await fetch('https://schedule-flow-ai.vercel.app/api/generate-schedule', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
