@@ -47,6 +47,10 @@ app.use(cors({
     
     // Reject all others
     console.log(`CORS blocked: ${origin}`);
+
+    // Allow any vercel.app domain
+if (origin && origin.includes('vercel.app')) return cb(null, true);
+    
     cb(new Error(`CORS policy violation: ${origin}`), false);
   },
   credentials: true,
