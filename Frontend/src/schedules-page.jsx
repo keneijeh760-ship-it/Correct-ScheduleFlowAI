@@ -17,7 +17,7 @@ function SchedulesPage() {
     try {
       const demoUserId = "demo-user";
       const res = await fetch(
-        `http://localhost:5000/api/schedules?userId=${encodeURIComponent(
+        `https://schedule-flow-ni8hb0lwd-kenes-projects-52f601fb.vercel.app/api/schedules?userId=${encodeURIComponent(
           demoUserId
         )}`
       );
@@ -37,7 +37,7 @@ function SchedulesPage() {
 
   const deletePdfSchedule = async (id) => {
     try {
-      const res = await fetch('https://schedule-flow-d53yvzg4x-kenes-projects-52f601fb.vercel.app/api/generate-schedule', {
+      const res = await fetch(`https://schedule-flow-ni8hb0lwd-kenes-projects-52f601fb.vercel.app/api/schedules/${id}`, {
         method: "DELETE",
       });
 
@@ -53,7 +53,7 @@ function SchedulesPage() {
 
   const downloadPdf = (pdfUrl, filename) => {
     if (pdfUrl?.startsWith("/api/download-pdf/")) {
-      window.open(`http://localhost:5000${pdfUrl}`, "_blank");
+     window.open(`https://schedule-flow-ni8hb0lwd-kenes-projects-52f601fb.vercel.app${pdfUrl}`, "_blank");
     } else if (pdfUrl) {
       const link = document.createElement("a");
       link.href = pdfUrl;
