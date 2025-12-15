@@ -1,0 +1,719 @@
+/* Support page styles */
+.support-container {
+  max-width: 500px;
+  margin: 180px auto 80px auto;
+  background: rgba(30, 30, 47, 0.95);
+  border-radius: 20px;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+  padding: 40px 32px;
+  color: white;
+  text-align: center;
+}
+.support-container h1 {
+  font-size: 2rem;
+  margin-bottom: 18px;
+}
+.support-list {
+  text-align: left;
+  margin: 24px 0 32px 0;
+  padding-left: 0;
+}
+.support-list li {
+  margin-bottom: 12px;
+  font-size: 1.08rem;
+}
+.support-list a {
+  color: #6a82fb;
+  text-decoration: underline;
+}
+.support-surprise {
+  background: linear-gradient(90deg, #6a4cff 0%, #6a82fb 100%);
+  color: #fff;
+  border-radius: 12px;
+  padding: 18px 16px;
+  margin-top: 24px;
+  box-shadow: 0 2px 8px rgba(79, 0, 255, 0.08);
+}
+.support-surprise h2 {
+  margin-bottom: 8px;
+  font-size: 1.2rem;
+}
+/* Message textarea styling for contact form */
+.message-textarea {
+  width: 100%;
+  padding: 12px 16px;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.1);
+  color: #222;
+  font-size: 16px;
+  transition: all 0.3s ease;
+  box-sizing: border-box;
+  margin-bottom: 20px;
+}
+.message-textarea:focus {
+  outline: none;
+  border-color: #00ccff;
+  background: rgba(255, 255, 255, 0.15);
+}
+.message-textarea::placeholder {
+  color: rgba(100, 100, 100, 0.6);
+}
+
+.send-message-btn {
+  width: 100%;
+  padding: 14px;
+  background: linear-gradient(135deg, #6a4cff, #6a82fb);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 10px;
+  box-shadow: 0 2px 8px rgba(79, 0, 255, 0.08);
+}
+.send-message-btn:hover {
+  background: linear-gradient(135deg, #6a82fb, #6a4cff);
+  transform: translateY(-2px) scale(1.03);
+}
+/* Center Contactus page container like signin/register */
+.contact-container {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  min-height: 100vh;
+  padding-top: 60px;
+  background-image: url('work.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+/* Custom styles for react-phone-input-2 to match other inputs */
+.form-group .react-tel-input {
+  width: 100%;
+}
+.form-group .react-tel-input .form-control {
+  width: calc(100% - 60px);
+  padding: 12px 16px 12px 48px;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  font-size: 16px;
+  transition: all 0.3s ease;
+  box-sizing: border-box;
+  margin-left: 0;
+}
+.form-group .react-tel-input .form-control:focus {
+  outline: none;
+  border-color: #00ccff;
+  background: rgba(255, 255, 255, 0.15);
+}
+.form-group .react-tel-input .form-control::placeholder {
+  color: rgba(255, 255, 255, 0.6);
+}
+.form-group .react-tel-input .flag-dropdown {
+  display: flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.1);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 10px 0 0 10px;
+  width: 60px;
+  min-width: 60px;
+  max-width: 60px;
+  left: 0;
+  padding: 0 6px;
+}
+.form-group .react-tel-input .selected-flag {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: transparent;
+  width: 100%;
+}
+.form-group .react-tel-input .selected-flag {
+  background: transparent;
+}
+/* Center and space the input and button in the AI input area */
+body {
+  margin: 0;
+  font-family: 'Segoe UI', sans-serif;
+  background-image: url('C:\Users\Kene\Desktop\Begginingresume\Frontend\src\assets\work.jpg');
+}
+
+
+.ai-input-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.2rem;
+  margin-top: 2.5rem;
+}
+
+#taskInput.demo {
+  width: 320px;
+  max-width: 90vw;
+  padding: 0.7rem 1.2rem;
+  font-size: 1.1rem;
+  border-radius: 8px;
+  border: 1.5px solid #fff;
+  background: rgba(30,30,47,0.7);
+  color: #fff;
+  margin-bottom: 0.5rem;
+  box-sizing: border-box;
+}
+
+#generateBtn.generateBtn {
+  width: 220px;
+  padding: 0.7rem 1.2rem;
+  font-size: 1.05rem;
+  background: linear-gradient(90deg, #4f00ff 0%, #00e5ff 100%);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.3s, color 0.3s, transform 0.2s;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+#generateBtn.generateBtn:hover {
+  background: linear-gradient(90deg, #00e5ff 0%, #4f00ff 100%);
+  color: #1e1e2f;
+  transform: translateY(-2px) scale(1.03);
+}
+body {
+  margin: 0;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.navbar {
+  background-color: #1e1e2f;
+  color: white;
+  padding: 1rem 2rem;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.nav-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo {
+  font-size: 1.3rem;
+  font-weight: bold;
+}
+
+/* nav links */
+.nav-links {
+  list-style: none;
+  display: flex;
+  gap: 2rem; /* consistent spacing between items */
+  margin: 0;
+  padding: 0;
+}
+
+.nav-links a {
+  color: white;
+  text-decoration: none;
+  font-weight: 500;
+  padding: 0.5rem 1rem; /* uniform clickable area */
+  transition: color 0.3s ease;
+}
+
+.nav-links a:hover {
+  color: #00ccff;
+}
+
+/* buttons */
+button {
+  padding: 0.5rem 1.2rem;
+  background-color: transparent;
+  color: white;
+  border: 1.5px solid white;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+button:hover {
+  background-color: white;
+  color: #1e1e2f;
+}
+
+/* spacing between the two buttons */
+.sign_in {
+  margin-right: 1rem;
+}
+
+.content {
+  
+  min-height: 100vh;
+  background-image: url('C:\Users\Kene\Desktop\Begginingresume\Frontend\src\assets\work.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  padding-top: 120px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+
+
+
+
+
+.demo{
+    border-radius: 30px;
+    color: white;
+    background-color: transparent;
+    margin-top: 400px;
+    margin-left: 15px;
+    padding: 20px 20px 20px 20px;
+    font-weight: bold;
+    border-style: solid;
+    
+}
+
+::placeholder{
+    color: white;
+    font-weight: bold;
+   text-align: center;
+}
+
+.container {
+      position: relative;
+      width: 400px;
+      height: 400px;
+    }
+
+    .wave-ring {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    .wave-ring svg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      transform-origin: center;
+    }
+
+    .wave-ring svg:nth-child(1) {
+      animation: spin 10s linear infinite;
+    }
+
+    .wave-ring svg:nth-child(2) {
+      transform: scale(1.1);
+      opacity: 0.6;
+      animation: spin-reverse 14s linear infinite;
+    }
+
+    .wave-ring svg:nth-child(3) {
+      transform: scale(1.2);
+      opacity: 0.4;
+      animation: spin 18s linear infinite;
+    }
+
+    .text-content {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      width: 300px;
+    }
+
+    .text-content h1 {
+      font-size: 22px;
+      line-height: 1.4;
+      margin: 0;
+      color: white;
+    }
+
+    .text-content p {
+      margin-top: 20px;
+      font-size: 14px;
+      color: #ccc;
+    }
+    
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to   { transform: rotate(360deg); }
+    }
+
+    @keyframes spin-reverse {
+      from { transform: rotate(360deg); }
+      to   { transform: rotate(0deg); }
+    }
+
+    .footer{
+    background-color: #1e1e2f;
+    color: white;       
+    
+    text-align: center;
+    position: relative;
+    vertical-align: middle;
+    margin-top: 0%;
+    display: flex;
+    height: 80px;
+    width: 100%;
+    
+    
+
+    }
+
+    .footer-links {
+        
+        list-style: none;
+        display: flex;
+        gap: 1.5rem;
+        padding-top: 12px;
+        margin-left: 200px;
+        margin-left: 600px;
+        text-decoration: none;
+       
+    }
+
+    .footer-links a {
+  color: white;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.footer-links a:hover {
+    color: #00ccff;
+    transition-duration: 0.7s;
+}
+
+
+    .copyright{
+        margin-top: 32px;
+        margin-left: 100px;
+
+
+    }
+
+.register-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      background-image: url('work.jpg');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+    }
+
+    .register-form {
+      background: rgba(30, 30, 47, 0.9);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 20px;
+      padding: 40px;
+      width: 100%;
+      max-width: 450px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    }
+
+    .register-form h2 {
+      color: white;
+      text-align: center;
+      margin-bottom: 30px;
+      font-size: 28px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      color: white;
+      margin-bottom: 8px;
+      font-weight: 500;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 12px 16px;
+      border: 2px solid rgba(255, 255, 255, 0.2);
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.1);
+      color: white;
+      font-size: 16px;
+      transition: all 0.3s ease;
+      box-sizing: border-box;
+    }
+
+    .form-group input:focus {
+      outline: none;
+      border-color: #00ccff;
+      background: rgba(255, 255, 255, 0.15);
+    }
+
+    .form-group input::placeholder {
+      color: rgba(255, 255, 255, 0.6);
+    }
+
+    .name-row {
+      display: flex;
+      gap: 15px;
+    }
+
+    .name-row .form-group {
+      flex: 1;
+    }
+
+    .register-btn {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, #4f00ff, #00e5ff);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-top: 10px;
+    }
+
+    .register-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(79, 0, 255, 0.3);
+    }
+
+    .form-footer {
+      text-align: center;
+      margin-top: 20px;
+      color: rgba(255, 255, 255, 0.7);
+    }
+
+    .form-footer a {
+      color: #00ccff;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .form-footer a:hover {
+      text-decoration: underline;
+    }
+
+    .back-home {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      color: white;
+      text-decoration: none;
+      font-weight: 500;
+      padding: 10px 20px;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-radius: 10px;
+      transition: all 0.3s ease;
+    }
+
+    .back-home:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: #00ccff;
+    }
+
+    .error-message {
+      color: #ff6b6b;
+      text-align: center;
+      margin-top: 10px;
+      font-size: 14px;
+    }
+
+    .success-message {
+      color: #51cf66;
+      text-align: center;
+      margin-top: 10px;
+      font-size: 14px;
+    }
+
+    .password-requirements {
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.6);
+      margin-top: 5px;
+    }
+
+    .signin-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      background-image: url('work.jpg');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+    }
+
+    .signin-form {
+      background: rgba(30, 30, 47, 0.9);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 20px;
+      padding: 40px;
+      width: 100%;
+      max-width: 400px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    }
+
+    .signin-form h2 {
+      color: white;
+      text-align: center;
+      margin-bottom: 30px;
+      font-size: 28px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      color: white;
+      margin-bottom: 8px;
+      font-weight: 500;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 12px 16px;
+      border: 2px solid rgba(255, 255, 255, 0.2);
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.1);
+      color: white;
+      font-size: 16px;
+      transition: all 0.3s ease;
+      box-sizing: border-box;
+    }
+
+    .form-group input:focus {
+      outline: none;
+      border-color: #00ccff;
+      background: rgba(255, 255, 255, 0.15);
+    }
+
+    .form-group input::placeholder {
+      color: rgba(255, 255, 255, 0.6);
+    }
+
+    .signin-btn {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, #4f00ff, #00e5ff);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-top: 10px;
+    }
+
+    .signin-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(79, 0, 255, 0.3);
+    }
+
+    .form-footer {
+      text-align: center;
+      margin-top: 20px;
+      color: rgba(255, 255, 255, 0.7);
+    }
+
+    .form-footer a {
+      color: #00ccff;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .form-footer a:hover {
+      text-decoration: underline;
+    }
+
+    .back-home {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      color: white;
+      text-decoration: none;
+      font-weight: 500;
+      padding: 10px 20px;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-radius: 10px;
+      transition: all 0.3s ease;
+    }
+
+    .back-home:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: #00ccff;
+    }
+
+    .error-message {
+      color: #ff6b6b;
+      text-align: center;
+      margin-top: 10px;
+      font-size: 14px;
+    }
+
+    .Contact_head h1{
+      color: white;
+      text-align: center;
+      margin-top: 50px;
+    }
+
+
+    .Contact_head p{
+      color: white;
+      text-align: center;
+       margin-bottom: 50px;
+    }
+
+    .Message_container{
+      background: rgba(30, 30, 47, 0.9);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 20px;
+      padding: 40px;
+      width: 100%;
+      max-width: 450px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+      
+     
+    }
+
+    .Message_form h2{
+      text-align: center;
+      color: white;
+    }
+
+   .phone-row {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 1rem;
+  width: 100%;
+}
+
+.phone-row .form-group {
+  flex: 1 1 0;
+  min-width: 0;
+  margin-bottom: 0; /* Remove extra margin if present */
+}

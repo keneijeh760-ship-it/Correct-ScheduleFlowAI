@@ -1,0 +1,197 @@
+import serverless from 'serverless-http';
+import express from 'express';
+import cors from 'cors';
+import bodyParser from 'body-parser';
+import dotenv from 'dotenv';
+import PDFDocument from 'pdfkit';
+import fs from 'fs';
+import path from 'path';
+import { promisify } from 'util';
+import { Client } from '@google/genai'; // Updated SDK
+
+dotenv.config();
+
+const app = express();
+
+// Promisify fs
+const writeFileAsync = promisify(fs.writeFile);
+const readFileAsync = promisify(fs.readFile);
+
+// AI client
+const genAI = process.env.GEMINI_API_KEY
+  ? new Client({ apiKey: process.env.GEMINI_API_KEY })
+  : null;
+
+// CORS configuration
+const allowedOrigins = [
+  'http://localhost:5173', 'http://localhost:5174',
+  'http://localhost:3000', 'http://localhost:3001',
+  'http://127.0.0.1:5173', 'http://127.0.0.1:5174',
+  'http://127.0.0.1:3000', 'http://127.0.0.1:3001'
+];
+if (process.env.FRONTEND_URL) allowedOrigins.push(process.env.FRONTEND_URL);
+if (process.env.VERCEL_URL) allowedOrigins.push(`https://${process.env.VERCEL_URL}`);
+
+app.use(cors({
+  origin: (origin, cb) => {
+    if (!origin) return cb(null, true);
+    if (allowedOrigins.includes(origin)) return cb(null, true);
+    if (process.env.NODE_ENV !== 'production' && origin.match(/^http:\/\/localhost:\d+$/)) return cb(null, true);
+    if (origin.includes('vercel.app')) return cb(null, true);
+    cb(new Error(`CORS policy violation: ${origin}`), false);
+  },
+  credentials: true,
+  methods: ['GET','POST','PUT','DELETE','OPTIONS'],
+  allowedHeaders: ['Content-Type','Authorization','X-Requested-With'],
+  optionsSuccessStatus: 200
+}));
+
+app.use(bodyParser.json({ limit:'10mb' }));
+app.use(bodyParser.urlencoded({ extended:true, limit:'10mb' }));
+app.use((req, res, next) => { console.log(`${new Date().toISOString()} - ${req.method} ${req.path}`); next(); });
+
+// Storage setup
+const dataDir = process.env.VERCEL ? '/tmp/data' : path.resolve(process.cwd(), 'data');
+const schedulesFile = path.join(dataDir, 'schedules.json');
+
+function ensureDirs() {
+  if (!fs.existsSync(dataDir)) fs.mkdirSync(dataDir, { recursive: true });
+  if (!fs.existsSync(schedulesFile)) fs.writeFileSync(schedulesFile, JSON.stringify({ schedules: [] }, null, 2), 'utf-8');
+}
+
+async function readSchedules() {
+  try {
+    ensureDirs();
+    const raw = await readFileAsync(schedulesFile, 'utf-8');
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed.schedules) ? parsed.schedules : [];
+  } catch (e) { return []; }
+}
+
+async function writeSchedules(schedules) {
+  ensureDirs();
+  await writeFileAsync(schedulesFile, JSON.stringify({ schedules }, null, 2), 'utf-8');
+}
+
+// --- Helpers ---
+function validateScheduleRequest(req, res, next) {
+  const { tasks, userId } = req.body;
+  if (!tasks || !Array.isArray(tasks) || tasks.length === 0)
+    return res.status(400).json({ error: 'Tasks must be a non-empty array' });
+  if (tasks.some(t => typeof t !== 'string' || t.trim() === ''))
+    return res.status(400).json({ error: 'All tasks must be non-empty strings' });
+  if (userId && typeof userId !== 'string')
+    return res.status(400).json({ error: 'userId must be string' });
+  next();
+}
+
+function buildSchedulePrompt(tasks, category, purpose) {
+  const cat = category ? `This schedule is for: ${category}. ` : '';
+  const pur = purpose ? `Purpose: ${purpose}. ` : '';
+  return `You are an intelligent schedule planner. ${cat}${pur}Tasks: ${tasks.join(", ")}. Return JSON with keys 6-7,7-8,...7-8PM for MONDAY-SUNDAY.`;
+}
+
+function parseScheduleFromAI(responseText) {
+  if (!responseText) throw new Error('Empty AI response');
+  let text = responseText.replace(/^```json\s*/i,'').replace(/^```\s*/i,'').replace(/```\s*$/i,'').trim();
+  let jsonMatch = text.match(/\{[\s\S]*\}/);
+  if (!jsonMatch) throw new Error('No JSON in AI response');
+  return JSON.parse(jsonMatch[0]);
+}
+
+function getDefaultSchedule(tasks) {
+  const t1 = tasks[0] || 'Work', t2 = tasks[1] || 'Study', t3 = tasks[2] || 'Exercise';
+  return {
+    "6-7": {"MONDAY": t1,"TUESDAY": t1,"WEDNESDAY": t1,"THURSDAY": t1,"FRIDAY": t1,"SATURDAY": t3,"SUNDAY": "Rest"},
+    "7-8": {"MONDAY": t2,"TUESDAY": t2,"WEDNESDAY": t2,"THURSDAY": t2,"FRIDAY": t2,"SATURDAY": t1,"SUNDAY": "Rest"},
+    "8-9": {"MONDAY": t1,"TUESDAY": t1,"WEDNESDAY": t1,"THURSDAY": t1,"FRIDAY": t1,"SATURDAY": t3,"SUNDAY": t2},
+    "9-10": {"MONDAY": t1,"TUESDAY": t1,"WEDNESDAY": t1,"THURSDAY": t1,"FRIDAY": t1,"SATURDAY": t2,"SUNDAY": t1},
+    "10-11": {"MONDAY": t1,"TUESDAY": t1,"WEDNESDAY": t1,"THURSDAY": t1,"FRIDAY": t1,"SATURDAY": t1,"SUNDAY": t3},
+    "11-12": {"MONDAY": t1,"TUESDAY": t1,"WEDNESDAY": t1,"THURSDAY": t1,"FRIDAY": t1,"SATURDAY": t2,"SUNDAY": t1},
+    "12-1": {"MONDAY":"Break","TUESDAY":"Break","WEDNESDAY":"Break","THURSDAY":"Break","FRIDAY":"Break","SATURDAY":"Break","SUNDAY":"Break"},
+    "1-2": {"MONDAY": t1,"TUESDAY": t1,"WEDNESDAY": t1,"THURSDAY": t1,"FRIDAY": t1,"SATURDAY": t3,"SUNDAY": t2},
+    "2-3": {"MONDAY": t1,"TUESDAY": t1,"WEDNESDAY": t1,"THURSDAY": t1,"FRIDAY": t1,"SATURDAY": t1,"SUNDAY": t1},
+    "3-4": {"MONDAY": t1,"TUESDAY": t1,"WEDNESDAY": t1,"THURSDAY": t1,"FRIDAY": t1,"SATURDAY": t2,"SUNDAY": t3},
+    "4-5": {"MONDAY": t2,"TUESDAY": t2,"WEDNESDAY": t2,"THURSDAY": t2,"FRIDAY": t2,"SATURDAY": t1,"SUNDAY": t1},
+    "5-6": {"MONDAY": t3,"TUESDAY": t3,"WEDNESDAY": t3,"THURSDAY": t3,"FRIDAY": t3,"SATURDAY": t3,"SUNDAY": t2},
+    "6-7PM": {"MONDAY": t2,"TUESDAY": t2,"WEDNESDAY": t2,"THURSDAY": t2,"FRIDAY": t2,"SATURDAY": t1,"SUNDAY": t1},
+    "7-8PM": {"MONDAY":"Rest","TUESDAY":"Rest","WEDNESDAY":"Rest","THURSDAY":"Rest","FRIDAY":"Rest","SATURDAY":"Rest","SUNDAY":"Rest"}
+  };
+}
+
+// PDF generation
+async function generatePDF(scheduleData, tasks) {
+  return new Promise((resolve, reject) => {
+    try {
+      const doc = new PDFDocument({ margin: 40, size: 'A4' });
+      let buffers = [];
+      doc.on('data', chunk => buffers.push(chunk));
+      doc.on('end', () => resolve(Buffer.concat(buffers)));
+      doc.on('error', reject);
+
+      doc.fontSize(20).text('Weekly Timetable', { align: 'center' }).moveDown(0.5);
+      doc.fontSize(10).text(`Tasks: ${tasks.join(' • ')}`, { align: 'center' }).moveDown(1);
+
+      const timeSlots = ['6-7','7-8','8-9','9-10','10-11','11-12','12-1','1-2','2-3','3-4','4-5','5-6','6-7PM','7-8PM'];
+      const days = ['MONDAY','TUESDAY','WEDNESDAY','THURSDAY','FRIDAY','SATURDAY','SUNDAY'];
+      const startX = 50, startY = doc.y, timeColWidth = 50, dayColWidth = 65, rowHeight = 20, totalWidth = timeColWidth + dayColWidth*7;
+
+      doc.lineWidth(1).rect(startX, startY, totalWidth, rowHeight*(timeSlots.length+1)).stroke();
+      doc.rect(startX, startY, totalWidth, rowHeight).fillAndStroke('#f0f0f0','#000');
+      doc.fillColor('#000').fontSize(8).text('TIME', startX+2, startY+5, { width: timeColWidth-4, align: 'center' });
+      days.forEach((day,i)=>doc.text(day,startX+timeColWidth+i*dayColWidth+2,startY+5,{width:dayColWidth-4,align:'center'}));
+
+      doc.fontSize(7);
+      timeSlots.forEach((slot,row)=>{
+        const y = startY + rowHeight*(row+1)+3;
+        doc.text(slot,startX+2,y,{width:timeColWidth-4,align:'center'});
+        days.forEach((day,col)=>{
+          const task = scheduleData[slot]?.[day] || 'Free';
+          const t = task.length > 12 ? task.slice(0,10)+'..' : task;
+          doc.text(t,startX+timeColWidth+col*dayColWidth+2,y,{width:dayColWidth-4,align:'center'});
+        });
+      });
+
+      doc.end();
+    } catch(e){ reject(e); }
+  });
+}
+
+// Routes
+app.get('/api/health', (req,res)=>res.json({status:'OK', timestamp:new Date().toISOString(), gemini: !!genAI}));
+
+app.post('/api/generate-schedule', validateScheduleRequest, async (req,res)=>{
+  const requestId = Date.now().toString();
+  const { tasks, category, purpose } = req.body;
+  let scheduleData;
+
+  try {
+    if(!genAI) scheduleData = getDefaultSchedule(tasks);
+    else {
+      const prompt = buildSchedulePrompt(tasks, category, purpose);
+      const response = await genAI.generateContent({
+        model: 'gemini-1.5-flash',
+        input: prompt
+      });
+      scheduleData = parseScheduleFromAI(response.outputText);
+    }
+  } catch(e){ scheduleData = getDefaultSchedule(tasks); }
+
+  try {
+    const pdfData = await generatePDF(scheduleData, tasks);
+    res.set({
+      'Content-Type':'application/pdf',
+      'Content-Disposition':'attachment; filename="weekly_timetable.pdf"',
+      'Content-Length': pdfData.length.toString(),
+      'X-Request-ID': requestId
+    });
+    res.send(pdfData);
+  } catch(e) {
+    res.status(500).json({error:'PDF generation failed', details:e.message});
+  }
+});
+
+// Fallback
+app.use((req,res)=>res.status(404).json({error:'Route not found', path:req.path}));
+
+export default serverless(app);

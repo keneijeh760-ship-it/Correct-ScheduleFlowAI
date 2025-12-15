@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Schedules API</title>
+</head>
+<body>
+    <h1>Test Schedules API</h1>
+    
+    <h2>1. Set User ID in localStorage</h2>
+    <button onclick="setUserId()">Set User ID to 'demo'</button>
+    <div id="userIdStatus"></div>
+    
+    <h2>2. Test GET /api/schedules</h2>
+    <button onclick="getSchedules()">Fetch Schedules</button>
+    <div id="schedulesResult"></div>
+    
+    <h2>3. Test POST /api/schedules</h2>
+    <button onclick="createSchedule()">Create New Schedule</button>
+    <div id="createResult"></div>
+    
+    <script>
+        function setUserId() {
+            localStorage.setItem('userData', JSON.stringify({ id: 'demo' }));
+            document.getElementById('userIdStatus').innerHTML = 'User ID set to "demo"';
+        }
+        
+        async function getSchedules() {
+            try {
+                const response = await fetch('/api/schedules?userId=demo');
+                const data = await response.json();
+                document.getElementById('schedulesResult').innerHTML = 
+                    '<pre>' + JSON.stringify(data, null, 2) + '</pre>';
+            } catch (error) {
+                document.getElementById('schedulesResult').innerHTML = 'Error: ' + error.message;
+            }
+        }
+        
+        async function createSchedule() {
+            try {
+                const response = await fetch('/api/schedules', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        userId: 'demo',
+                        tasks: 'New task 1, New task 2',
+                        schedule: 'This is a new schedule created via the test page'
+                    })
+                });
+                const data = await response.json();
+                document.getElementById('createResult').innerHTML = 
+                    '<pre>' + JSON.stringify(data, null, 2) + '</pre>';
+            } catch (error) {
+                document.getElementById('createResult').innerHTML = 'Error: ' + error.message;
+            }
+        }
+    </script>
+</body>
+</html>
