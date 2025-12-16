@@ -12,22 +12,23 @@ dotenv.config();
 
 const app = express();
 
-// Promisify fs
-const writeFileAsync = promisify(fs.writeFile);
-const readFileAsync = promisify(fs.readFile);
-
-// AI client - Using fetch API for Gemini
-const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
-const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent';
+// Manual CORS handler - MUST be first
+app.use((req, res, next) => {
+  res.setHeader('Access-Control-Allow-Origin', 'https://correct-schedule-flow-ai-frontend-c.vercel.app');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  res.setHeader('Access-Control-Allow-Credentials', 'true');
+  
+  // Handle preflight
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
+  }
+  
+  next();
+});
 
 app.use(cors({
-  origin: [
-    'https://correct-schedule-flow-ai-frontend-c.vercel.app',
-    'http://localhost:3000',
-    'http://localhost:5173'   
-  ],
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
+  origin: 'https://correct-schedule-flow-ai-frontend-c.vercel.app',
   credentials: true
 }));
 
