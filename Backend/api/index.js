@@ -20,7 +20,16 @@ const readFileAsync = promisify(fs.readFile);
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent';
 
-app.use(cors());
+app.use(cors({
+  origin: [
+    'https://correct-schedule-flow-ai-frontend-c.vercel.app',
+    'http://localhost:3000',
+    'http://localhost:5173'   
+  ],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true
+}));
 
 app.use(bodyParser.json({ limit:'10mb' }));
 app.use(bodyParser.urlencoded({ extended:true, limit:'10mb' }));
